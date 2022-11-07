@@ -84,17 +84,21 @@ st.title("A quick Fall 2022 Fellows Diagnostic Dashboard from Omar")
 # filt = st.selectbox("Select the College", pd.unique(df_expected['Graduation Date']))
 # new_df = df_expected[df_expected['Graduation Date'] == filt]
 
-
 # milestone figures
 
-milestone_chart = new_df['Milestone Link'].value_counts().reset_index()
-milestone_d = {
-    1: 2,
-    2: 3,
-    3: 1
-}
-milestones = milestone_chart.rename(milestone_d).sort_index()
-figure_1 = px.bar(milestones,y='index',x='Milestone Link', color='index',color_discrete_map={'Clarity':"#00A3E1",'Alignment': "#85C540",'Search Strategy': "#D04D9D",'Interviewing & Advancing': "#FFC507"})
+milestone_order = ['Clarity','Alignment','Search Strategy','Interviewing & Advancing']
+
+milestone_chart = new_df['Milestone Link'].value_counts().reset_index().rename(columns={'index':'Milestone Score','Milestone Link':'Number of Fellows'})
+
+milestone_chart['Milestone Score']=pd.Categorical(milestone_chart['Milestone Score'],[x for x in milestone_order if x in milestone_chart['Milestone Score'].unique().tolist()],ordered=True)
+
+# milestone_d = {
+#     1: 2,
+#     2: 3,
+#     3: 1
+# }
+milestones = milestone_chart.sort_values(by='Milestone Score')
+figure_1 = px.bar(milestones,y='Milestone Score',x='Number of Fellows', color='Milestone Score',color_discrete_map={'Clarity':"#00A3E1",'Alignment': "#85C540",'Search Strategy': "#D04D9D",'Interviewing & Advancing': "#FFC507"})
 
 st.markdown("### Milestone Distribution")
 st.plotly_chart(figure_1,use_container_width=True)
@@ -110,25 +114,26 @@ st.plotly_chart(figure_2,use_container_width=True)
 
 # energy style figures
 
-energy = new_df['Energy Style Summary'].value_counts().reset_index()
-energy_d = {
-    0: 1,
-    1: 2,
-    2: 0,
-}
+energy = new_df['Energy Style Summary'].value_counts().reset_index().rename(columns={'index':'Energy Label','Energy Style Summary':'Number of Fellows'})
 
-energy_df = energy.rename(energy_d).sort_index()
-figure_3 = px.bar(energy_df,x='index',y='Energy Style Summary',color='index')
+energy_order = ['Strong Introvert','Slight Introvert','Ambivert','Slight Extrovert','Strong Extrovert']
+
+energy['Energy Label']=pd.Categorical(energy['Energy Label'],[x for x in energy_order if x in energy['Energy Label'].unique().tolist()],ordered=True)
+
+energy_df = energy.sort_values(by='Energy Label')
+
+figure_3 = px.bar(energy_df,x='Energy Label',y='Number of Fellows',color='Energy Label')
 
 # predictability figures
 
-predict = new_df['Predictability Preference Summary'].value_counts().reset_index()
-predict_d = {
-    0:1,
-    1:0
-}
-predict_df = predict.rename(predict_d).sort_index()
-figure_4 = px.bar(predict_df,x='index',y='Predictability Preference Summary',color='index')
+predict = new_df['Predictability Preference Summary'].value_counts().reset_index().rename(columns={'index':'Predictability Label','Predictability Preference Summary':'Number of Fellows'})
+
+predict_order = ['Structured','Any Work Environment','Flexible']
+
+predict['Predictability Label'] = pd.Categorical(predict['Predictability Label'],[x for x in predict_order if x in predict['Predictability Label'].unique().tolist()],ordered=True)
+
+predict_df = predict.sort_values(by='Predictability Label')
+figure_4 = px.bar(predict_df,x='Predictability Label',y='Number of Fellows',color='Predictability Label')
 
 
 # putting energy and predictability figures into columns
@@ -147,28 +152,21 @@ profiles = new_df['User Profile'].value_counts().reset_index().sort_index()
 figure_5 = px.bar(profiles,x='index',y='User Profile',color='index')
 st.plotly_chart(figure_5,use_container_width=True)
 
-salary = new_df['Salary Expectations Summary'].value_counts().reset_index().sort_index()
-salary_d = {
-    0:2,
-    1:3,
-    2:0,
-    3:1
-}
-salary_df = salary.rename(salary_d).sort_index()
-figure_6 = px.bar(salary_df,x='index',y='Salary Expectations Summary',color='index')
+salary = new_df['Salary Expectations Summary'].value_counts().reset_index().sort_index().rename(columns={'index':'Salary Expectation','Salary Expectations Summary':'Number of Fellows'})
+salary_order = ['Salary Unsure','40-60K','60-80K','80-100K','100K+']
 
-gpa = new_df['A21 GPA Link'].value_counts().reset_index().sort_index()
-gpa_d ={
-    6:0,
-    5:1,
-    4:2,
-    3:3,
-    0:4,
-    1:5,
-    2:6
-}
-gpa_df = gpa.rename(gpa_d).sort_index()
-figure_7 = px.bar(gpa_df,x='index',y='A21 GPA Link',color='index')
+salary['Salary Expectation'] = pd.Categorical(salary['Salary Expectation'],[x for x in salary_order if x in salary['Salary Expectation'].unique().tolist()],ordered=True)
+
+salary_df = salary.sort_values(by='Salary Expectation')
+figure_6 = px.bar(salary_df,x='Salary Expectation',y='Number of Fellows',color='Salary Expectation')
+
+gpa = new_df['A21 GPA Link'].value_counts().reset_index().sort_index().rename(columns={'index':'GPA Range','A21 GPA Link':'Number of Fellows'})
+gpa_order = ['Less than 2.00','Between 2.00 and 2.49','Between 2.50 and 2.79', 'Between 2.80 and 2.99','Between 3.00 and 3.49','Between 3.50 and 3.79','3.80 or higher']
+
+gpa['GPA Range'] = pd.Categorical(gpa['GPA Range'],[x for x in gpa_order if x in gpa['GPA Range'].unique().tolist()],ordered=True)
+
+gpa_df = gpa.sort_values(by='GPA Range')
+figure_7 = px.bar(gpa_df,x='GPA Range',y='Number of Fellows',color='GPA Range')
 
 
 cola,colb= st.columns(2)
