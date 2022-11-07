@@ -64,8 +64,17 @@ def get_data_to_df():
     
     return df_expected
 
-new_df = get_data_to_df()
 
+
+big_df = get_data_to_df()
+
+st.sidebar.header("Filter by College and Grad Date here")
+college = st.sidebar.multiselect("Select the College:",options=big_df['College/University'].unique(),default=big_df['College/University'].unique())
+
+grad_date = st.sidebar.multiselect("Select the College:",options=big_df['Graduation Date'].unique(),default=big_df['Graduation Date'].unique())
+
+# filt = (big_df['College/University'] == college) & (big_df['Graduation Date'] == grad_date)
+new_df = big_df.query("`College/University` == @college & `Graduation Date` == @grad_date")
 
 st.title("A quick Fall 2022 Fellows Diagnostic Dashboard from Omar")
 
