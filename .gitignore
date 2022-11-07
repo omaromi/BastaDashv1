@@ -2,3 +2,4 @@
 app.ipynb
 app.py
 fellowDash.ipynb
+.streamlit/secrets.toml

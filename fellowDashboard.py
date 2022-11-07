@@ -1,5 +1,5 @@
 from decouple import config
-APIKEY = config('AIRTABLE_API_KEY')
+# APIKEY = config('AIRTABLE_API_KEY')
 
 from pyairtable import Table
 import pandas as pd
@@ -46,7 +46,7 @@ def get_data_to_df():
         'College/University'
         ]
 
-    records = Table(APIKEY,base_id,'Fellows x Diagnostic 1.5')
+    records = Table(st.secrets['AT_KEY'],base_id,'Fellows x Diagnostic 1.5')
     data = records.all(view='OMN StreamlitView', fields=desired_fields)
 
     # flattening the dataframe
